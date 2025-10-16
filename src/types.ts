@@ -1,4 +1,5 @@
 export interface Repo {
+  id?: number;
   name: string;
   description: string | null;
   full_name: string;
@@ -7,6 +8,7 @@ export interface Repo {
 export interface CommitAuthor {
   name: string;
   date: string;
+  email?: string;
 }
 
 export interface CommitTree {

@@ -89,7 +89,7 @@ function formatDate(date: string) {
 											<strong>Date:</strong> {{ formatDate(store.commitDetails[commit.sha]?.commit.author.date || '') }}<br />
 											<strong>Message:</strong> {{ store.commitDetails[commit.sha]?.commit.message }}<br />
 											<div v-if="store.commitDetails[commit.sha]?.stats">
-												<strong>Stats:</strong>
+												<strong>Stats: </strong>
 												<span>Additions: {{ store.commitDetails[commit.sha].stats.additions }}</span>,
 												<span>Deletions: {{ store.commitDetails[commit.sha].stats.deletions }}</span>
 											</div>

@@ -25,3 +25,25 @@ export interface Commit {
   commit: CommitCommit;
   author: { login: string } | null;
 }
+
+export interface CommitFile {
+  filename: string;
+  additions: number;
+  deletions: number;
+  changes: number;
+  status: string;
+  patch?: string;
+}
+
+export interface CommitStats {
+  total: number;
+  additions: number;
+  deletions: number;
+}
+
+export interface CommitDetail {
+  sha: string;
+  commit: CommitCommit;
+  files: CommitFile[];
+  stats: CommitStats;
+}

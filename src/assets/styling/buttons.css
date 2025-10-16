@@ -30,3 +30,13 @@ button {
     background-color: #b71c1c;
     color: #ffffff;
 }
+
+/* Success button */
+.btn-success {
+    background-color: #43a047;
+    color: #fff;
+}
+.btn-success:hover {
+    background-color: #2e7031;
+    color: #fff;
+}

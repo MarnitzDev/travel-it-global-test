@@ -1,6 +1,11 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import type { Repo, Commit } from '../types.ts';
+import type { Repo, Commit, CommitDetail } from '../types.ts';
+
+// Extended type for favorite commits
+export interface FavoriteCommit extends Commit {
+  repository: { name: string };
+}
 
 
 const GITHUB_API_BASE = import.meta.env.VITE_GITHUB_API_BASE || 'https://api.github.com';
@@ -9,7 +14,8 @@ const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 export const useGithubStore = defineStore('github', () => {
   const repos = ref<Repo[]>([]);
   const commits = ref<Commit[]>([]);
-  const favorites = ref<Commit[]>([]);
+  const favorites = ref<FavoriteCommit[]>([]);
+  const commitDetails = ref<Record<string, CommitDetail>>({});
   const error = ref<string | null>(null);
   const loading = ref(false);
 
@@ -58,6 +64,27 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
+  // Action to fetch commit details
+  async function fetchCommitDetails(username: string, repo: string, sha: string) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/${username}/${repo}/commits/${sha}`
+      );
+      if (!response.ok) {
+        if (response.status === 403) throw new Error('API rate limit exceeded');
+        throw new Error('Failed to fetch commit details');
+      }
+      const data = await response.json();
+      commitDetails.value[sha] = data;
+    } catch (err) {
+      error.value = (err as Error).message;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   // Function to get sorted commits by order
   function sortedCommits(sortOrder: 'newest' | 'oldest' = 'newest') {
     return [...commits.value].sort((a, b) => {
@@ -68,9 +95,13 @@ export const useGithubStore = defineStore('github', () => {
   }
 
   // Add favorite commit
-  function addFavorite(commit: Commit) {
+  function addFavorite(commit: Commit, repoName?: string) {
     if (!favorites.value.some((f) => f.sha === commit.sha)) {
-      favorites.value.push(commit);
+      const favorite: FavoriteCommit = {
+        ...commit,
+        repository: { name: repoName || '' }
+      };
+      favorites.value.push(favorite);
     }
   }
 
@@ -83,10 +114,12 @@ export const useGithubStore = defineStore('github', () => {
     repos,
     commits,
     favorites,
+    commitDetails,
     error,
     loading,
     fetchRepos,
     fetchCommits,
+    fetchCommitDetails,
     sortedCommits,
     addFavorite,
     removeFavorite

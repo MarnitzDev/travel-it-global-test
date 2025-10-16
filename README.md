@@ -31,7 +31,11 @@ GitHub Commit Explorer built with Vue 3, Vite, Pinia, and Vitest.
    npm run build
    ```
 
-## Test
+## Requirements
+
+- Node.js ^20.19.0 or >=22.12.0 (recommended: Node.js 22)
+
+## Setup
 
 Run all unit tests:
 ```sh

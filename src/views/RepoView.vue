@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useGithubStore } from '../stores/github';
 import type { Commit } from '../types';
+import dayjs from 'dayjs';
 
 const route = useRoute();
 const store = useGithubStore();
@@ -29,6 +30,10 @@ function toggleFavorite(commit: Commit) {
   } else {
     store.addFavorite(commit);
   }
+}
+
+function formatDate(date: string) {
+  return dayjs(date).format('MMMM D, YYYY h:mm A');
 }
 </script>
 
@@ -62,7 +67,7 @@ function toggleFavorite(commit: Commit) {
                         <div class="commit-message">{{ commit.commit.message }}</div>
                         <div class="commit-meta">
                             <span class="commit-author">{{ commit.author?.login || commit.commit.author.name }}</span>
-                            <span class="commit-date">{{ new Date(commit.commit.author.date).toLocaleString() }}</span>
+                            <span class="commit-date">{{ formatDate(commit.commit.author.date) }}</span>
                         </div>
                         <button @click="toggleFavorite(commit)" class="btn-primary mt-3">
                             {{ store.favorites.some(f => f.sha === commit.sha) ? 'Unfavorite' : 'Favorite' }}

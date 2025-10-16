@@ -68,6 +68,10 @@ async function fetchCommits() {
     max-width: 1200px;
     margin: 2rem auto;
 }
+.repo-view h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
 .username {
     color: #1976d2;
 }
@@ -88,32 +92,6 @@ async function fetchCommits() {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid #f0f0f0;
-}
-.repo-btn {
-    background: none;
-    border: none;
-    color: #333;
-    font-weight: bold;
-    font-size: 1.1rem;
-    cursor: pointer;
-    padding: 0 0.5rem;
-    margin-bottom: 0.2rem;
-    transition: color 0.2s;
-}
-.repo-btn:hover {
-    color: #1976d2;
-}
-.fetch-btn {
-    margin-left: 0.5rem;
-    padding: 0.2rem 0.7rem;
-    font-size: 14px;
-    border-radius: 4px;
-    background: #1976d2;
-    color: #ffffff;
-}
-.fetch-btn:hover {
-    background: #2166ac;
-    color: #ffffff;
 }
 .repo-desc {
     color: #888;

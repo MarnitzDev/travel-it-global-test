@@ -1,10 +1,10 @@
-// src/stores/github.ts
-
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import type { Repo, Commit } from '../types.ts';
 
+
 const GITHUB_API_BASE = import.meta.env.VITE_GITHUB_API_BASE || 'https://api.github.com';
+const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 
 export const useGithubStore = defineStore('github', () => {
   const repos = ref<Repo[]>([]);
@@ -17,7 +17,9 @@ export const useGithubStore = defineStore('github', () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await fetch(`${GITHUB_API_BASE}/users/${username}/repos`);
+      const response = await fetch(`${GITHUB_API_BASE}/users/${username}/repos`, {
+        headers: GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {}
+      });
       if (!response.ok) {
         if (response.status === 404) throw new Error('User not found');
         if (response.status === 403) throw new Error('API rate limit exceeded');
@@ -37,8 +39,10 @@ export const useGithubStore = defineStore('github', () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await fetch(
-        `https://api.github.com/repos/${username}/${repo}/commits?page=${page}&per_page=${perPage}`
+      const response = await fetch(`${GITHUB_API_BASE}/repos/${username}/${repo}/commits?page=${page}&per_page=${perPage}`,
+        {
+          headers: GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {}
+        }
       );
       if (!response.ok) {
         if (response.status === 403) throw new Error('API rate limit exceeded');
@@ -53,6 +57,15 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
+  // Function to get sorted commits by order
+  function sortedCommits(sortOrder: 'newest' | 'oldest' = 'newest') {
+    return [...commits.value].sort((a, b) => {
+      const dateA = new Date(a.commit.author.date).getTime();
+      const dateB = new Date(b.commit.author.date).getTime();
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+  }
+
   return {
     repos,
     commits,
@@ -60,5 +73,6 @@ export const useGithubStore = defineStore('github', () => {
     loading,
     fetchRepos,
     fetchCommits,
+    sortedCommits
   };
 });

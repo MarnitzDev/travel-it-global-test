@@ -101,6 +101,11 @@ function formatDate(date: string) {
 								</li>
 							</ul>
 							<p v-else class="no-commits">No commits found.</p>
+                            <div class="pagination">
+                                <button @click="page--; fetchCommits()" :disabled="page <= 1">Previous</button>
+                                <span>Page {{ page }}</span>
+                                <button @click="page++; fetchCommits()">Next</button>
+                            </div>
 						</div>
 					</li>
 				</ul>
@@ -296,5 +301,14 @@ function formatDate(date: string) {
     border-radius: 6px;
     padding: 1rem;
     margin-top: 0.5rem;
+}
+
+.pagination { 
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
+}
+.pagination button { 
+    margin: 0 1em; 
 }
 </style>

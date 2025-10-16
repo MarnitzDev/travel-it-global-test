@@ -19,7 +19,8 @@ export const useGithubStore = defineStore('github', () => {
   const error = ref<string | null>(null);
   const loading = ref(false);
 
-  // Action to fetch repositories
+  // Fetch repositories for a given username from GitHub API
+  // Handles loading, error, and updates repos state
   async function fetchRepos(username: string) {
     loading.value = true;
     error.value = null;
@@ -41,7 +42,8 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
-  // Action to fetch commits with pagination
+  // Fetch commits for a repo (with pagination) from GitHub API
+  // Handles loading, error, and updates commits state
   async function fetchCommits(username: string, repo: string, page = 1, perPage = 10) {
     loading.value = true;
     error.value = null;
@@ -64,7 +66,8 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
-  // Action to fetch commit details
+  // Fetch commit details (files changed, stats) for a commit from GitHub API
+  // Handles loading, error, and updates commitDetails state
   async function fetchCommitDetails(username: string, repo: string, sha: string) {
     loading.value = true;
     error.value = null;
@@ -85,7 +88,7 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
-  // Function to get sorted commits by order
+  // Sorts commits by date (newest or oldest)
   function sortedCommits(sortOrder: 'newest' | 'oldest' = 'newest') {
     return [...commits.value].sort((a, b) => {
       const dateA = new Date(a.commit.author.date).getTime();
@@ -94,7 +97,7 @@ export const useGithubStore = defineStore('github', () => {
     });
   }
 
-  // Add favorite commit
+  // Add a commit to favorites (persisted)
   function addFavorite(commit: Commit, repoName?: string) {
     if (!favorites.value.some((f) => f.sha === commit.sha)) {
       const favorite: FavoriteCommit = {
@@ -105,7 +108,7 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
-  // Remove favorite commit
+  // Remove a commit from favorites
   function removeFavorite(sha: string) {
     favorites.value = favorites.value.filter((f) => f.sha !== sha);
   }

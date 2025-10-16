@@ -27,7 +27,7 @@ async function fetchRepos() {
     <h1>GitHub Commit Explorer</h1>
     <form @submit.prevent="fetchRepos">
       <input v-model="username" placeholder="Enter GitHub username" />
-      <button type="submit" class="fetch-btn">Fetch Repositories</button>
+      <button type="submit" class="primary-btn ml-3">Fetch Repositories</button>
       <p v-if="validationError" class="error">{{ validationError }}</p>
       <p v-if="store.error" class="error">{{ store.error }}</p>
     </form>

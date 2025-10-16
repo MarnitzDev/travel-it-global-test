@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useGithubStore } from '../stores/github';
+import type { Commit } from '../types';
 
 const route = useRoute();
 const store = useGithubStore();
@@ -21,6 +22,14 @@ async function fetchCommits() {
     await store.fetchCommits(username.value, selectedRepo.value, page.value, perPage);
   }
 }
+
+function toggleFavorite(commit: Commit) {
+  if (store.favorites.some((f) => f.sha === commit.sha)) {
+    store.removeFavorite(commit.sha);
+  } else {
+    store.addFavorite(commit);
+  }
+}
 </script>
 
 <template>
@@ -32,7 +41,7 @@ async function fetchCommits() {
                 <ul v-if="store.repos.length">
                     <li v-for="repo in store.repos" :key="repo.name" :class="{ selected: selectedRepo === repo.name }">
                         <span class="repo-name">{{ repo.name }}</span>
-                        <button class="repo-btn fetch-btn" @click="selectedRepo = repo.name; fetchCommits()">Show Commits</button>
+                        <button class="repo-btn btn-primary ml-2" @click="selectedRepo = repo.name; fetchCommits()">Show Commits</button>
                         <p class="repo-desc">{{ repo.description || 'No description' }}</p>
                     </li>
                 </ul>
@@ -55,9 +64,23 @@ async function fetchCommits() {
                             <span class="commit-author">{{ commit.author?.login || commit.commit.author.name }}</span>
                             <span class="commit-date">{{ new Date(commit.commit.author.date).toLocaleString() }}</span>
                         </div>
+                        <button @click="toggleFavorite(commit)" class="btn-primary mt-3">
+                            {{ store.favorites.some(f => f.sha === commit.sha) ? 'Unfavorite' : 'Favorite' }}
+                        </button>
                     </li>
                 </ul>
                 <p v-else class="no-commits">No commits found.</p>
+            </section>
+
+            <section class="favorites">
+                <h2>Favorite Commits</h2>
+                <ul v-if="store.favorites.length">
+                    <li v-for="commit in store.favorites" :key="commit.sha">
+                    <p><strong>Message:</strong> {{ commit.commit.message }}</p>
+                    <button @click="store.removeFavorite(commit.sha)" class="btn-danger">Delete</button>
+                    </li>
+                </ul>
+                <p v-else>No favorites yet.</p>
             </section>
         </div>
     </div>
@@ -80,7 +103,7 @@ async function fetchCommits() {
     gap: 2rem;
 }
 .repos {
-    flex: 50%;
+    flex: 30%;
     border-right: 1px solid #eee;
     padding-right: 2rem;
 }
@@ -98,7 +121,7 @@ async function fetchCommits() {
     font-size: 14px;
 }
 .commits {
-    flex: 50%;
+    flex: 40%;
     padding-left: 2rem;
 }
 .commits-controls {
@@ -130,5 +153,10 @@ async function fetchCommits() {
 .no-commits {
     color: #b71c1c;
     margin-top: 1rem;
+}
+.favorites {
+    flex: 30%;
+    border-left: 1px solid #eee;
+    padding-left: 2rem;
 }
 </style>

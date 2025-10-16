@@ -9,6 +9,7 @@ const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 export const useGithubStore = defineStore('github', () => {
   const repos = ref<Repo[]>([]);
   const commits = ref<Commit[]>([]);
+  const favorites = ref<Commit[]>([]);
   const error = ref<string | null>(null);
   const loading = ref(false);
 
@@ -66,13 +67,30 @@ export const useGithubStore = defineStore('github', () => {
     });
   }
 
+  // Add favorite commit
+  function addFavorite(commit: Commit) {
+    if (!favorites.value.some((f) => f.sha === commit.sha)) {
+      favorites.value.push(commit);
+    }
+  }
+
+  // Remove favorite commit
+  function removeFavorite(sha: string) {
+    favorites.value = favorites.value.filter((f) => f.sha !== sha);
+  }
+
   return {
     repos,
     commits,
+    favorites,
     error,
     loading,
     fetchRepos,
     fetchCommits,
-    sortedCommits
+    sortedCommits,
+    addFavorite,
+    removeFavorite
   };
+}, {
+  persist: true, // Persist favorites using pinia-plugin-persistedstate
 });

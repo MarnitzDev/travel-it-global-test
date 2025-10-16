@@ -44,9 +44,10 @@ function formatDate(date: string) {
 </script>
 
 <template>
-	<div class="repo-view">
-		<h1>Repositories for <span class="username">{{ username }}</span></h1>
-		<div class="main-content">
+		<div class="repo-view">
+			<h1>Repositories for <span class="username">{{ username }}</span></h1>
+			<div v-if="store.error" class="error-banner">{{ store.error }}</div>
+			<div class="main-content">
 			<section class="repos">
 				<h2 class="repos-title">Repositories</h2>
 				<ul v-if="store.repos.length" class="repos-list">
@@ -90,8 +91,8 @@ function formatDate(date: string) {
 											<strong>Message:</strong> {{ store.commitDetails[commit.sha]?.commit.message }}<br />
 											<div v-if="store.commitDetails[commit.sha]?.stats">
 												<strong>Stats: </strong>
-												<span>Additions: {{ store.commitDetails[commit.sha].stats.additions }}</span>,
-												<span>Deletions: {{ store.commitDetails[commit.sha].stats.deletions }}</span>
+												<span>Additions: {{ store.commitDetails[commit.sha]?.stats.additions }}</span>,
+												<span>Deletions: {{ store.commitDetails[commit.sha]?.stats.deletions }}</span>
 											</div>
 											<div v-if="store.commitDetails[commit.sha]?.files">
 												<strong>Files Changed:</strong>
@@ -106,11 +107,11 @@ function formatDate(date: string) {
 								</li>
 							</ul>
 							<p v-else class="no-commits">No commits found.</p>
-                            <div class="pagination">
-                                <button @click="page--; fetchCommits()" :disabled="page <= 1">Previous</button>
-                                <span>Page {{ page }}</span>
-                                <button @click="page++; fetchCommits()">Next</button>
-                            </div>
+							<div v-if="store.commits.length === perPage || page > 1" class="pagination">
+								<button @click="if (page > 1) { page--; fetchCommits(); }" :disabled="page <= 1">Previous</button>
+								<span>Page {{ page }}</span>
+								<button @click="if (store.commits.length === perPage) { page++; fetchCommits(); }" :disabled="store.commits.length < perPage">Next</button>
+							</div>
 						</div>
 					</li>
 				</ul>
@@ -138,6 +139,17 @@ function formatDate(date: string) {
 </template>
 
 <style scoped>
+.error-banner {
+	background: #ffeaea;
+	color: #b71c1c;
+	border: 1px solid #ffcdd2;
+	padding: 1rem 1.5rem;
+	border-radius: 6px;
+	margin-bottom: 1.5rem;
+	font-size: 1.1rem;
+	font-weight: 500;
+	letter-spacing: 0.2px;
+}
 .repo-view {
     max-width: 1200px;
     margin: 2rem auto;

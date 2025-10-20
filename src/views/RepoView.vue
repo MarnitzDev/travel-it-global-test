@@ -49,7 +49,6 @@ function formatDate(date: string) {
 			<div v-if="store.error" class="error-banner">{{ store.error }}</div>
 			<div class="main-content">
 			<section class="repos">
-				<h2 class="repos-title">Repositories</h2>
 				<ul v-if="store.repos.length" class="repos-list">
 					<li v-for="repo in store.repos" :key="repo.name" :class="['repo-card', { selected: selectedRepo === repo.name }]">
 						<div class="repo-header">
@@ -118,21 +117,7 @@ function formatDate(date: string) {
 				<p v-else class="no-repos">No repositories found.</p>
 			</section>
 
-			<section class="favorites">
-				<h2>Favorite Commits</h2>
-				<ul v-if="store.favorites.length" class="favorites-list">
-                    <li v-for="commit in store.favorites" :key="commit.sha" class="favorite-item">
-                        <div class="favorite-message">{{ commit.commit.message }}</div>
-                        <div class="favorite-meta">
-                            <span><strong>Author:</strong> {{ commit.author?.login || commit.commit.author.name }}</span><br />
-                            <span><strong>Date:</strong> {{ formatDate(commit.commit.author.date) }}</span>
-                            <span v-if="commit.repository?.name"><br /><strong>Repo:</strong> {{ commit.repository.name }}</span>
-                        </div>
-                        <button @click="store.removeFavorite(commit.sha)" class="btn-danger remove-btn">Delete</button>
-					</li>
-				</ul>
-				<p v-else>No favorites yet.</p>
-			</section>
+
 
 		</div>
 	</div>

@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-import '@/assets/styling/buttons.css';
-import '@/assets/styling/helper.css';
+
+import '@/assets/styling/main.scss';
 
 import App from './App.vue'
 import router from './router'

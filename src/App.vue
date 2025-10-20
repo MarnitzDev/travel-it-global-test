@@ -1,33 +1,18 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+ import AppHeader from './components/AppHeader.vue';
+</script>
 
 <template>
-  <header>
-    <div class="header-content">
-      <nav>
-        <router-link to="/">TravelITGlobal Test</router-link>
-      </nav>
-    </div>
-  </header>
-  <main>
+  <AppHeader />
+  <main class="bg-gray-900">
     <div class="container">
       <router-view />
     </div>
   </main>
 </template>
+  
+<style lang="scss">
 
-<style>
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Helvetica, Arial, sans-serif;
-  background-color: #f5f5f5;
-  color: #2c3e50;
-}
-header {
-  background: #333; 
-  padding: 1em; 
-  text-align: center; 
-}
 .header-content {
   max-width: 1200px;
   margin: 0 auto;

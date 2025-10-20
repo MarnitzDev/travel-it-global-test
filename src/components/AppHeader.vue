@@ -7,8 +7,9 @@
           Travel<span class="text-green-500">it</span>Global <span class="font-normal"> Assignment</span>
         </router-link>
       </div>
-      <div>
-        <router-link to="/favorites" class="btn-primary ml-4">Favorites</router-link>
+      <div class="flex items-center space-x-2">
+        <router-link to="/repos" class="btn-primary">Repos</router-link>
+        <router-link to="/favorites" class="btn-primary ml-2">Favorites</router-link>
       </div>
     </div>
     </div>

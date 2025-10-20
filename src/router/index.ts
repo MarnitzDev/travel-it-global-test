@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue';
 
-import RepoView from '../views/RepoView.vue';
+import ReposView from '../views/ReposView.vue';
+import CommitsView from '../views/CommitsView.vue';
 import FavoritesView from '../views/FavoritesView.vue';
 
 const router = createRouter({
@@ -13,9 +14,14 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/repos/:username',
+      path: '/repos',
       name: 'repos',
-      component: RepoView,
+      component: ReposView,
+    },
+    {
+      path: '/repos/:username/:repo',
+      name: 'commits',
+      component: CommitsView,
     },
     {
       path: '/favorites',

@@ -11,7 +11,7 @@ import AppFooter from './components/AppFooter.vue';
         <router-view />
       </div>
     </main>
-    <AppFooter />
+    <AppFooter class="mt-16" />
   </div>
 </template>
   

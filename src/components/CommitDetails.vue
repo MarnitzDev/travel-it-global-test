@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Commit } from '../types';
-const props = defineProps<{ commit: Commit }>();
+import { useFormatting } from '../composables/useFormatting';
+const props = defineProps<{ commit: Commit, details?: any }>();
+const { formatDate } = useFormatting();
 </script>
 
 <template>
@@ -9,9 +11,28 @@ const props = defineProps<{ commit: Commit }>();
     <div class="text-sm text-gray-200">
       <strong>SHA:</strong> {{ props.commit.sha }}<br />
       <strong>Author:</strong> {{ props.commit.commit.author.name }}<br />
-      <strong>Date:</strong> {{ props.commit.commit.author.date }}<br />
+  <strong>Date:</strong> {{ formatDate(props.commit.commit.author.date) }}<br />
       <strong>Message:</strong> {{ props.commit.commit.message }}<br />
-      <!-- Add stats/files if available -->
+      <template v-if="props.details">
+        <div class="mt-2">
+          <strong>Stats:</strong>
+          <span v-if="props.details.stats">
+            +{{ props.details.stats.additions }} / -{{ props.details.stats.deletions }} ({{ props.details.stats.total }} changes)
+          </span>
+        </div>
+        <div v-if="props.details.files && props.details.files.length" class="mt-2">
+          <strong>Files Changed:</strong>
+          <ul class="ml-4 list-disc">
+            <li v-for="file in props.details.files" :key="file.filename">
+              <span class="text-gray-300">{{ file.filename }}</span>
+              <span v-if="file.additions || file.deletions" class="ml-2">
+                <span class="text-green-400">+{{ file.additions }}</span>
+                <span class="text-red-400 ml-1">-{{ file.deletions }}</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </template>
     </div>
   </div>
 </template>

@@ -2,6 +2,7 @@
 
 import { ref } from 'vue';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/24/solid';
+import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/24/outline';
 import type { Repo, Commit } from '../types';
 import { useUIStore } from '../stores/uiStore.ts';
 import { useGithubStore } from '../stores/github';
@@ -69,13 +70,24 @@ async function handleCommitPageChange(page: number) {
         ]"
       >
         <div class="flex items-center justify-between mb-2">
-          <span class="font-semibold text-lg text-primary-500">{{ repo.name }}</span>
+          <span class="font-semibold text-lg text-primary-500 flex items-center gap-1">
+            {{ repo.name }}
+            <a
+              :href="`https://github.com/${props.username}/${repo.name}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="ml-1 p-1 rounded hover:bg-blue-900/30 transition-colors"
+              :title="`Open ${repo.name} on GitHub`"
+            >
+              <ArrowTopRightOnSquareIcon class="w-5 h-5 text-blue-400" />
+            </a>
+          </span>
           <button class="btn ml-2 flex items-center gap-1" @click="handleSelect(repo.name)">
             <span>{{ uiStore.selections.selectedRepo === repo.name ? 'Hide Commits' : 'Show Commits' }}</span>
             <component :is="uiStore.selections.selectedRepo === repo.name ? ChevronUpIcon : ChevronDownIcon" class="w-5 h-5" />
           </button>
         </div>
-        <p class="text-gray-300 text-sm pr-40">{{ repo.description || 'No description' }}</p>
+        <p class="text-gray-300 text-sm pr-48">{{ repo.description || 'No description' }}</p>
         <div v-if="uiStore.selections.selectedRepo === repo.name" class="mt-4">
           <CommitList
             :commits="githubStore.commits"

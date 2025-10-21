@@ -1,10 +1,14 @@
 <script setup lang="ts">
+
 import type { Commit } from '../types';
 import CommitDetails from './CommitDetails.vue';
+import { useFormatting } from '../composables/useFormatting';
 const props = defineProps<{
   commit: Commit;
   selected: boolean;
+  details?: any;
 }>();
+const { formatDate } = useFormatting();
 
 import { HeartIcon as HeartSolid, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/solid';
 import { HeartIcon as HeartOutline } from '@heroicons/vue/24/outline';
@@ -17,7 +21,7 @@ import { HeartIcon as HeartOutline } from '@heroicons/vue/24/outline';
         <div class="commit-message font-medium truncate overflow-ellipsis whitespace-nowrap max-w-2xl md:max-w-3xl lg:max-w-5xl">{{ props.commit.commit.message }}</div>
         <div class="commit-meta text-xs text-gray-400 flex flex-col gap-0 mt-1">
           <span class="commit-author">{{ props.commit.author?.login || props.commit.commit.author.name }}</span>
-          <span class="commit-date">{{ props.commit.commit.author.date }}</span>
+          <span class="commit-date">{{ formatDate(props.commit.commit.author.date) }}</span>
         </div>
       </div>
       <div class="flex flex-row gap-2">
@@ -37,7 +41,7 @@ import { HeartIcon as HeartOutline } from '@heroicons/vue/24/outline';
         </button>
       </div>
     </div>
-    <CommitDetails v-if="props.selected" :commit="props.commit" />
+  <CommitDetails v-if="props.selected" :commit="props.commit" :details="props.details" />
   </li>
 </template>
 

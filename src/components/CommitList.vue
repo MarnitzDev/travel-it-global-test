@@ -1,6 +1,10 @@
 <script setup lang="ts">
+
 import type { Commit } from '../types';
 import CommitItem from './CommitItem.vue';
+import { useGithubStore } from '../stores/github';
+import { useUIStore } from '../stores/uiStore';
+import { computed } from 'vue';
 
 const props = defineProps<{
   commits: Commit[];
@@ -12,9 +16,21 @@ const emit = defineEmits(['toggleFavorite', 'update:page']);
 import { ref } from 'vue';
 import PaginationControls from './PaginationControls.vue';
 const selectedCommit = ref<string>('');
+const githubStore = useGithubStore();
+const uiStore = useUIStore();
 
-function handleSelectCommit(sha: string) {
-  selectedCommit.value = selectedCommit.value === sha ? '' : sha;
+async function handleSelectCommit(sha: string) {
+  if (selectedCommit.value === sha) {
+    selectedCommit.value = '';
+  } else {
+    selectedCommit.value = sha;
+    // Fetch commit details if not already loaded
+    const repo = typeof uiStore.selections.selectedRepo === 'string' ? uiStore.selections.selectedRepo : '';
+    const username = typeof uiStore.selections.username === 'string' ? uiStore.selections.username : '';
+    if (repo && username && !githubStore.commitDetails[sha]) {
+      await githubStore.fetchCommitDetails(username, repo, sha);
+    }
+  }
 }
 
 function handlePrev() {
@@ -32,6 +48,7 @@ function handleNext() {
       :key="commit.sha"
       :commit="commit"
       :selected="selectedCommit === commit.sha"
+      :details="selectedCommit === commit.sha ? githubStore.commitDetails[commit.sha] : undefined"
       @select="handleSelectCommit(commit.sha)"
       @toggle-favorite="emit('toggleFavorite', commit)"
     />

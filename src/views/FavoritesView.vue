@@ -2,6 +2,8 @@
 import { useGithubStore } from '../stores/github';
 const store = useGithubStore();
 
+import { TrashIcon } from '@heroicons/vue/24/solid';
+
 // Optionally, add logic for removing favorites or viewing details
 </script>
 
@@ -22,7 +24,13 @@ const store = useGithubStore();
             </div>
           </div>
           <div class="mt-2 md:mt-0 flex items-center space-x-2">
-            <button @click="store.removeFavorite(fav.sha)" class="btn-danger px-3 py-1 rounded hover:bg-red-700 transition-colors">Remove</button>
+            <button
+              @click="store.removeFavorite(fav.sha)"
+              class="px-3 py-1 rounded-lg font-semibold text-white shadow hover:bg-red-700 hover:cursor-pointer transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+            >
+              <TrashIcon class="w-4 h-4" />
+              Remove
+            </button>
           </div>
         </div>
       </li>

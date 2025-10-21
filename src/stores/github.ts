@@ -1,17 +1,17 @@
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import type { Repo, Commit, CommitDetail } from '../types.ts';
+import { GithubProvider } from '../providers/gitProvider';
 
 // Extended type for favorite commits
-export interface FavoriteCommit extends Commit {
+interface FavoriteCommit extends Commit {
   repository: { name: string };
 }
 
-
-const GITHUB_API_BASE = import.meta.env.VITE_GITHUB_API_BASE || 'https://api.github.com';
-const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
+const provider = new GithubProvider();
 
 export const useGithubStore = defineStore('github', () => {
+  // Data
   const repos = ref<Repo[]>([]);
   const commits = ref<Commit[]>([]);
   const favorites = ref<FavoriteCommit[]>([]);
@@ -19,21 +19,36 @@ export const useGithubStore = defineStore('github', () => {
   const error = ref<string | null>(null);
   const loading = ref(false);
 
-  // Fetch repositories for a given username from GitHub API
-  // Handles loading, error, and updates repos state
-  async function fetchRepos(username: string) {
+  // UI/logic state
+  const username = ref('');
+  const selectedRepo = ref('');
+  const selectedCommit = ref('');
+  const page = ref(1);
+  const pageSize = ref(10);
+  const sortOrder = ref<'newest' | 'oldest'>('newest');
+
+  // Keep commit favorited state in sync with favorites
+  watch(favorites, (newFavs: FavoriteCommit[]) => {
+    const favShas = new Set(newFavs.map(f => f.sha));
+    for (const c of commits.value) {
+      c.favorited = favShas.has(c.sha);
+    }
+  }, { deep: true });
+
+  // Actions
+  function setUsername(name: string) { username.value = name; }
+  function setSelectedRepo(repo: string) { selectedRepo.value = repo; }
+  function setSelectedCommit(sha: string) { selectedCommit.value = sha; }
+  function setPage(p: number) { page.value = p; }
+  function setSortOrder(order: 'newest' | 'oldest') { sortOrder.value = order; }
+
+  async function fetchRepos(name?: string) {
     loading.value = true;
     error.value = null;
     try {
-      const response = await fetch(`${GITHUB_API_BASE}/users/${username}/repos`, {
-        headers: GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {}
-      });
-      if (!response.ok) {
-        if (response.status === 404) throw new Error('User not found');
-        if (response.status === 403) throw new Error('API rate limit exceeded');
-        throw new Error('Failed to fetch repositories');
-      }
-      repos.value = await response.json();
+      const user = name ?? username.value;
+      repos.value = await provider.fetchRepos(user);
+      username.value = user;
     } catch (err) {
       error.value = (err as Error).message;
       repos.value = [];
@@ -42,22 +57,17 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
-  // Fetch commits for a repo (with pagination) from GitHub API
-  // Handles loading, error, and updates commits state
-  async function fetchCommits(username: string, repo: string, page = 1, perPage = 10) {
+  async function fetchCommits(user?: string, repoName?: string, p?: number, perPage?: number) {
     loading.value = true;
     error.value = null;
     try {
-      const response = await fetch(`${GITHUB_API_BASE}/repos/${username}/${repo}/commits?page=${page}&per_page=${perPage}`,
-        {
-          headers: GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {}
-        }
-      );
-      if (!response.ok) {
-        if (response.status === 403) throw new Error('API rate limit exceeded');
-        throw new Error('Failed to fetch commits');
-      }
-      commits.value = await response.json();
+      const userVal = user ?? username.value;
+      const repoVal = repoName ?? selectedRepo.value;
+      const pageVal = p ?? page.value;
+      const pageSizeVal = perPage ?? pageSize.value;
+      commits.value = await provider.fetchCommits(userVal, repoVal, pageVal, pageSizeVal);
+      selectedRepo.value = repoVal;
+      page.value = pageVal;
     } catch (err) {
       error.value = (err as Error).message;
       commits.value = [];
@@ -66,21 +76,15 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
-  // Fetch commit details (files changed, stats) for a commit from GitHub API
-  // Handles loading, error, and updates commitDetails state
-  async function fetchCommitDetails(username: string, repo: string, sha: string) {
+  async function fetchCommitDetails(user?: string, repoName?: string, sha?: string) {
     loading.value = true;
     error.value = null;
     try {
-      const response = await fetch(
-        `https://api.github.com/repos/${username}/${repo}/commits/${sha}`
-      );
-      if (!response.ok) {
-        if (response.status === 403) throw new Error('API rate limit exceeded');
-        throw new Error('Failed to fetch commit details');
-      }
-      const data = await response.json();
-      commitDetails.value[sha] = data;
+      const userVal = user ?? username.value;
+      const repoVal = repoName ?? selectedRepo.value;
+      const shaVal = sha ?? selectedCommit.value;
+      commitDetails.value[shaVal] = await provider.fetchCommitDetails(userVal, repoVal, shaVal);
+      selectedCommit.value = shaVal;
     } catch (err) {
       error.value = (err as Error).message;
     } finally {
@@ -88,29 +92,41 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
-  // Sorts commits by date (newest or oldest)
-  function sortedCommits(sortOrder: 'newest' | 'oldest' = 'newest') {
+  function sortedCommits(order?: 'newest' | 'oldest') {
+    const useOrder = order || sortOrder.value;
     return [...commits.value].sort((a, b) => {
       const dateA = new Date(a.commit.author.date).getTime();
       const dateB = new Date(b.commit.author.date).getTime();
-      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+      return useOrder === 'newest' ? dateB - dateA : dateA - dateB;
     });
   }
 
-  // Add a commit to favorites (persisted)
   function addFavorite(commit: Commit, repoName?: string) {
     if (!favorites.value.some((f) => f.sha === commit.sha)) {
       const favorite: FavoriteCommit = {
         ...commit,
-        repository: { name: repoName || '' }
+        repository: { name: repoName || selectedRepo.value || '' }
       };
       favorites.value.push(favorite);
+      const match = commits.value.find(c => c.sha === commit.sha);
+      if (match) match.favorited = true;
     }
   }
 
-  // Remove a commit from favorites
   function removeFavorite(sha: string) {
     favorites.value = favorites.value.filter((f) => f.sha !== sha);
+    const match = commits.value.find(c => c.sha === sha);
+    if (match) match.favorited = false;
+  }
+
+  function toggleFavorite(commit: Commit) {
+    if (favorites.value.some((f) => f.sha === commit.sha)) {
+      removeFavorite(commit.sha);
+      commit.favorited = false;
+    } else {
+      addFavorite(commit);
+      commit.favorited = true;
+    }
   }
 
   return {
@@ -120,13 +136,23 @@ export const useGithubStore = defineStore('github', () => {
     commitDetails,
     error,
     loading,
+    username,
+    selectedRepo,
+    selectedCommit,
+    page,
+    pageSize,
+    sortOrder,
+    setUsername,
+    setSelectedRepo,
+    setSelectedCommit,
+    setPage,
+    setSortOrder,
     fetchRepos,
     fetchCommits,
     fetchCommitDetails,
     sortedCommits,
     addFavorite,
-    removeFavorite
+    removeFavorite,
+    toggleFavorite
   };
-}, {
-  persist: true, // Persist favorites using pinia-plugin-persistedstate
-});
+}, { persist: true });

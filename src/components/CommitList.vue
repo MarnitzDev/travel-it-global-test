@@ -3,59 +3,41 @@
 import type { Commit } from '../types';
 import CommitItem from './CommitItem.vue';
 import { useGithubStore } from '../stores/github';
-import { useUIStore } from '../stores/uiStore';
-import { computed } from 'vue';
-
-const props = defineProps<{
-  commits: Commit[];
-  page: number;
-  hasNext: boolean;
-}>();
-const emit = defineEmits(['toggleFavorite', 'update:page']);
-
-import { ref } from 'vue';
 import PaginationControls from './PaginationControls.vue';
-const selectedCommit = ref<string>('');
-const githubStore = useGithubStore();
-const uiStore = useUIStore();
+
+const store = useGithubStore();
 
 async function handleSelectCommit(sha: string) {
-  if (selectedCommit.value === sha) {
-    selectedCommit.value = '';
+  if (store.selectedCommit === sha) {
+    store.setSelectedCommit('');
   } else {
-    selectedCommit.value = sha;
-    // Fetch commit details if not already loaded
-    const repo = typeof uiStore.selections.selectedRepo === 'string' ? uiStore.selections.selectedRepo : '';
-    const username = typeof uiStore.selections.username === 'string' ? uiStore.selections.username : '';
-    if (repo && username && !githubStore.commitDetails[sha]) {
-      await githubStore.fetchCommitDetails(username, repo, sha);
-    }
+    await store.fetchCommitDetails(undefined, undefined, sha);
   }
 }
 
 function handlePrev() {
-  if (props.page > 1) emit('update:page', props.page - 1);
+  if (store.page > 1) store.setPage(store.page - 1);
 }
 function handleNext() {
-  if (props.hasNext) emit('update:page', props.page + 1);
+  if (store.commits.length === store.pageSize) store.setPage(store.page + 1);
 }
 </script>
 
 <template>
-  <ul v-if="props.commits.length" class="commit-list">
+  <ul v-if="store.commits.length" class="commit-list">
     <CommitItem
-      v-for="commit in props.commits"
+      v-for="commit in store.commits"
       :key="commit.sha"
       :commit="commit"
-      :selected="selectedCommit === commit.sha"
-      :details="selectedCommit === commit.sha ? githubStore.commitDetails[commit.sha] : undefined"
+      :selected="store.selectedCommit === commit.sha"
+      :details="store.selectedCommit === commit.sha ? store.commitDetails[commit.sha] : undefined"
       @select="handleSelectCommit(commit.sha)"
-      @toggle-favorite="emit('toggleFavorite', commit)"
+      @toggle-favorite="store.toggleFavorite(commit)"
     />
     <PaginationControls
-      v-if="props.commits.length >= 10 || props.page > 1"
-      :page="props.page"
-      :has-next="props.hasNext"
+      v-if="store.commits.length >= store.pageSize || store.page > 1"
+      :page="store.page"
+      :has-next="store.commits.length === store.pageSize"
       @prev="handlePrev"
       @next="handleNext"
     />

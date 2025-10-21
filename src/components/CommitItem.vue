@@ -3,12 +3,14 @@
 import type { Commit } from '../types';
 import CommitDetails from './CommitDetails.vue';
 import { useFormatting } from '../composables/useFormatting';
+import { useGithubStore } from '../stores/github';
 const props = defineProps<{
   commit: Commit;
   selected: boolean;
   details?: any;
 }>();
 const { formatDate } = useFormatting();
+const store = useGithubStore();
 
 import { HeartIcon as HeartSolid, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/solid';
 import { HeartIcon as HeartOutline } from '@heroicons/vue/24/outline';
@@ -26,14 +28,14 @@ import { HeartIcon as HeartOutline } from '@heroicons/vue/24/outline';
       </div>
       <div class="flex flex-row gap-2">
         <button
-          @click="$emit('toggleFavorite', props.commit)"
+          @click="store.toggleFavorite(props.commit)"
           class="px-2 py-1 rounded bg-black text-xs text-white hover:bg-gray-800 transition-all border border-gray-700 shadow-sm flex items-center gap-1"
           style="min-height: 1.5rem; line-height: 1;"
         >
           <component :is="props.commit.favorited ? HeartSolid : HeartOutline" class="w-4 h-4" :class="props.commit.favorited ? 'text-pink-400' : 'text-gray-400'" />
         </button>
         <button
-          @click="$emit('select', props.commit.sha)"
+          @click="store.setSelectedCommit(props.commit.sha)"
           class="px-2 py-1 rounded bg-black text-xs text-white hover:bg-gray-800 transition-all border border-gray-700 shadow-sm flex items-center gap-1"
           style="min-height: 1.5rem; line-height: 1;"
         >

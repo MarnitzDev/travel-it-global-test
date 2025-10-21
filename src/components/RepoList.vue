@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
 import { ref } from 'vue';
-import type { Repo } from '../types';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/24/solid';
+import type { Repo, Commit } from '../types';
 import { useUIStore } from '../stores/uiStore.ts';
 import { useGithubStore } from '../stores/github';
 import CommitList from './CommitList.vue';
@@ -34,6 +35,18 @@ async function handleSelect(repoName: string) {
   }
 }
 
+
+function handleToggleFavorite(commit: Commit) {
+  if (commit.favorited) {
+    githubStore.removeFavorite(commit.sha);
+    commit.favorited = false;
+  } else {
+    const repoName = typeof uiStore.selections.selectedRepo === 'string' ? uiStore.selections.selectedRepo : '';
+    githubStore.addFavorite(commit, repoName);
+    commit.favorited = true;
+  }
+}
+
 async function handleCommitPageChange(page: number) {
   commitPage.value = page;
   const selectedRepo = typeof uiStore.selections.selectedRepo === 'string' ? uiStore.selections.selectedRepo : '';
@@ -57,8 +70,9 @@ async function handleCommitPageChange(page: number) {
       >
         <div class="flex items-center justify-between mb-2">
           <span class="font-semibold text-lg text-primary-500">{{ repo.name }}</span>
-          <button class="btn-primary ml-2" @click="handleSelect(repo.name)">
-            {{ uiStore.selections.selectedRepo === repo.name ? 'Hide Commits' : 'Show Commits' }}
+          <button class="btn ml-2 flex items-center gap-1" @click="handleSelect(repo.name)">
+            <span>{{ uiStore.selections.selectedRepo === repo.name ? 'Hide Commits' : 'Show Commits' }}</span>
+            <component :is="uiStore.selections.selectedRepo === repo.name ? ChevronUpIcon : ChevronDownIcon" class="w-5 h-5" />
           </button>
         </div>
         <p class="text-gray-300 text-sm pr-40">{{ repo.description || 'No description' }}</p>
@@ -68,6 +82,7 @@ async function handleCommitPageChange(page: number) {
             :page="commitPage"
             :has-next="githubStore.commits.length === pageSize"
             @update:page="handleCommitPageChange"
+            @toggleFavorite="handleToggleFavorite"
           />
           <div v-if="loadingRepo === repo.name" class="text-gray-400 text-xs mt-2 flex items-center gap-2">
             <svg class="animate-spin h-4 w-4 text-primary-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>

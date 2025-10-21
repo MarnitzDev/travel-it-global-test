@@ -26,6 +26,7 @@ export interface Commit {
   sha: string;
   commit: CommitCommit;
   author: { login: string } | null;
+  favorited?: boolean;
 }
 
 export interface CommitFile {

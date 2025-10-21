@@ -5,6 +5,9 @@ const props = defineProps<{
   commit: Commit;
   selected: boolean;
 }>();
+
+import { HeartIcon as HeartSolid, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/solid';
+import { HeartIcon as HeartOutline } from '@heroicons/vue/24/outline';
 </script>
 
 <template>
@@ -20,17 +23,17 @@ const props = defineProps<{
       <div class="flex flex-row gap-2">
         <button
           @click="$emit('toggleFavorite', props.commit)"
-          class="px-2 py-1 rounded bg-black text-xs text-white hover:bg-gray-800 transition-all border border-gray-700 shadow-sm"
+          class="px-2 py-1 rounded bg-black text-xs text-white hover:bg-gray-800 transition-all border border-gray-700 shadow-sm flex items-center gap-1"
           style="min-height: 1.5rem; line-height: 1;"
         >
-          Favorite
+          <component :is="props.commit.favorited ? HeartSolid : HeartOutline" class="w-4 h-4" :class="props.commit.favorited ? 'text-pink-400' : 'text-gray-400'" />
         </button>
         <button
           @click="$emit('select', props.commit.sha)"
-          class="px-2 py-1 rounded bg-black text-xs text-white hover:bg-gray-800 transition-all border border-gray-700 shadow-sm"
+          class="px-2 py-1 rounded bg-black text-xs text-white hover:bg-gray-800 transition-all border border-gray-700 shadow-sm flex items-center gap-1"
           style="min-height: 1.5rem; line-height: 1;"
         >
-          {{ props.selected ? 'Hide' : 'View' }}
+          <component :is="props.selected ? EyeSlashIcon : EyeIcon" class="w-4 h-4 text-blue-400" />
         </button>
       </div>
     </div>

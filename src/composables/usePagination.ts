@@ -1,6 +1,9 @@
 import { ref, computed, watch } from 'vue';
 
-export function usePagination({ pageSize = 10, total }: { pageSize?: number; total?: number } = {}) {
+export function usePagination({
+  pageSize = 10,
+  total,
+}: { pageSize?: number; total?: number } = {}) {
   const page = ref(1);
   const _pageSize = ref(pageSize);
   const _total = ref<number | undefined>(total);

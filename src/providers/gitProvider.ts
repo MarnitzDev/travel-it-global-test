@@ -30,9 +30,12 @@ export class GithubProvider implements GitProvider {
   }
 
   async fetchCommits(username: string, repo: string, page = 1, perPage = 10): Promise<Commit[]> {
-    const response = await fetch(`${this.apiBase}/repos/${username}/${repo}/commits?page=${page}&per_page=${perPage}`, {
-      headers: this.getHeaders(),
-    });
+    const response = await fetch(
+      `${this.apiBase}/repos/${username}/${repo}/commits?page=${page}&per_page=${perPage}`,
+      {
+        headers: this.getHeaders(),
+      }
+    );
     if (!response.ok) {
       let msg = 'Failed to fetch commits';
       try {

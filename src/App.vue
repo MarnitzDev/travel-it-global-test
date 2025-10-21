@@ -14,7 +14,7 @@ import AppFooter from './components/AppFooter.vue';
     <AppFooter class="mt-16" />
   </div>
 </template>
-  
+
 <style lang="scss">
 .container {
   max-width: 1200px;

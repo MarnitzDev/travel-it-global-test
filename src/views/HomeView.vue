@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useGithubStore } from '../stores/github.ts';
+import { ArrowPathIcon } from '@heroicons/vue/24/solid';
 
 const router = useRouter();
 const store = useGithubStore();
@@ -27,17 +28,14 @@ async function fetchRepos() {
 </script>
 
 <template>
-    <div class="text-center mx-auto mt-8 mb-8">
-      <h1 class="mt-48 mb-6 text-2xl md:text-4xl">GitHub Commit Explorer</h1>
+  <div class="text-center mx-auto mt-8 mb-8">
+    <h1 class="mt-48 mb-6 text-2xl md:text-4xl">GitHub Commit Explorer</h1>
     <div class="mx-auto max-w-md bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-700">
       <form @submit.prevent="fetchRepos">
-        <input v-model="username" placeholder="Enter GitHub username" class="w-full" /> 
+        <input v-model="username" placeholder="Enter GitHub username" class="w-full" />
         <button type="submit" class="btn-primary mt-4 w-full" :disabled="loading">
           <span v-if="loading" class="inline-flex items-center justify-center">
-            <svg class="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-            </svg>
+            <ArrowPathIcon class="animate-spin h-5 w-5 mr-2 text-white" />
             Loading...
           </span>
           <span v-else>Fetch Repositories</span>

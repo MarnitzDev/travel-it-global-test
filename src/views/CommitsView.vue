@@ -35,10 +35,7 @@ function handleNextPage() {
 <template>
   <div class="commits-view max-w-3xl mx-auto mt-10">
     <h1 class="text-3xl font-bold mb-6 text-center">Commits for {{ repo }}</h1>
-    <CommitList
-      :commits="store.sortedCommits(sortOrder)"
-      :selected-commit="''"
-    />
+    <CommitList :commits="store.sortedCommits(sortOrder)" :selected-commit="''" />
     <PaginationControls
       :page="page"
       :has-next="store.commits.length === perPage"

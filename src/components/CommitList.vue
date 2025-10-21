@@ -1,11 +1,9 @@
 <script setup lang="ts">
-
 import { ref, computed } from 'vue';
 import CommitItem from './CommitItem.vue';
 import { useGithubStore } from '../stores/github';
 import PaginationControls from './PaginationControls.vue';
 import type { Commit } from '../types';
-
 
 const store = useGithubStore();
 
@@ -14,9 +12,13 @@ const sortBy = ref<'date-desc' | 'date-asc' | 'author'>('date-desc');
 const sortedCommits = computed(() => {
   const commits = [...store.commits];
   if (sortBy.value === 'date-desc') {
-    return commits.sort((a, b) => new Date(b.commit.author.date).getTime() - new Date(a.commit.author.date).getTime());
+    return commits.sort(
+      (a, b) => new Date(b.commit.author.date).getTime() - new Date(a.commit.author.date).getTime()
+    );
   } else if (sortBy.value === 'date-asc') {
-    return commits.sort((a, b) => new Date(a.commit.author.date).getTime() - new Date(b.commit.author.date).getTime());
+    return commits.sort(
+      (a, b) => new Date(a.commit.author.date).getTime() - new Date(b.commit.author.date).getTime()
+    );
   } else if (sortBy.value === 'author') {
     return commits.sort((a, b) => {
       const aName = a.commit.author.name?.toLowerCase() || '';
@@ -57,7 +59,10 @@ async function handleNext() {
   <div v-if="store.commits.length">
     <div class="mb-2 flex flex-wrap gap-2 items-center">
       <label class="text-xs text-gray-400">Sort by:</label>
-      <select v-model="sortBy" class="text-xs rounded border-gray-600 bg-gray-900 text-white px-2 py-1">
+      <select
+        v-model="sortBy"
+        class="text-xs rounded border-gray-600 bg-gray-900 text-white px-2 py-1"
+      >
         <option value="date-desc">Newest</option>
         <option value="date-asc">Oldest</option>
       </select>
@@ -83,4 +88,3 @@ async function handleNext() {
   </div>
   <p v-else class="no-commits">No commits found.</p>
 </template>
-

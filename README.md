@@ -1,6 +1,15 @@
 # travel-it-global-test
 
-GitHub Commit Explorer built with Vue 3, Vite, Pinia, and Vitest.
+GitHub Commit Explorer built with:
+
+- **Vue 3** (Composition API)
+- **Vite** (build tool)
+- **Pinia** (state management, with persisted state)
+- **TypeScript** (type safety)
+- **Tailwind CSS** & **SCSS** (styling)
+- **Heroicons** (SVG icons)
+- **ESLint** (linting)
+- **Vitest** (unit testing)
 
 ## Features
 
@@ -10,7 +19,8 @@ GitHub Commit Explorer built with Vue 3, Vite, Pinia, and Vitest.
 - View commit details (files changed, author, date, etc.)
 - Responsive, modern UI with custom styling
 - TypeScript, ESLint, and unit tests with Vitest
-
+- Tailwind CSS and SCSS for styling
+- Heroicons for SVG icons
 
 ## Project Setup
 
@@ -38,7 +48,7 @@ GitHub Commit Explorer built with Vue 3, Vite, Pinia, and Vitest.
 ## Setup
 
 Run all unit tests:
+
 ```sh
 npx vitest run
 ```
-

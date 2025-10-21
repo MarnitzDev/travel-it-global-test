@@ -111,7 +111,6 @@ describe('GitHub Store', () => {
       expect(store.error).toBe(null);
     });
 
-
     it('handles 404 error for invalid user', async () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
@@ -162,7 +161,9 @@ describe('GitHub Store', () => {
       await store.fetchCommits('MarnitzDev', 'travel-it-global-test', 1, 10);
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/repos/MarnitzDev/travel-it-global-test/commits?page=1&per_page=10'),
+        expect.stringContaining(
+          '/repos/MarnitzDev/travel-it-global-test/commits?page=1&per_page=10'
+        ),
         expect.objectContaining({
           headers: expect.any(Object),
         })
@@ -321,8 +322,8 @@ describe('GitHub Store', () => {
   });
 
   describe('addFavorite and removeFavorite', () => {
-  const sampleCommit = mockCommits[0];
-  if (!sampleCommit) throw new Error('No sample commit');
+    const sampleCommit = mockCommits[0];
+    if (!sampleCommit) throw new Error('No sample commit');
     const repoName = 'travel-it-global-test';
 
     it('adds a new favorite commit', () => {

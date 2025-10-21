@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
-import { createPinia } from 'pinia'
-import HomeView from '../views/HomeView.vue'
+import { describe, it, expect, vi } from 'vitest';
+import { mount } from '@vue/test-utils';
+import { createPinia } from 'pinia';
+import HomeView from '../views/HomeView.vue';
 
 describe('HomeView', () => {
   it('mounts without error', () => {
@@ -11,9 +11,9 @@ describe('HomeView', () => {
         mocks: {
           $router: { push: vi.fn() },
         },
-        stubs: ['router-link', 'router-view']
-      }
-    })
-    expect(wrapper.exists()).toBe(true)
-  })
-})
+        stubs: ['router-link', 'router-view'],
+      },
+    });
+    expect(wrapper.exists()).toBe(true);
+  });
+});

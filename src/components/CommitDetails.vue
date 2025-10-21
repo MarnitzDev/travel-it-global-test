@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Commit, CommitDetail } from '../types';
 import { useFormatting } from '../composables/useFormatting';
-const props = defineProps<{ commit: Commit, details?: CommitDetail }>();
+const props = defineProps<{ commit: Commit; details?: CommitDetail }>();
 const { formatDate } = useFormatting();
+import { ArrowPathIcon } from '@heroicons/vue/24/solid';
 </script>
 
 <template>
@@ -15,7 +16,7 @@ const { formatDate } = useFormatting();
       <strong>Message:</strong> {{ props.commit.commit.message }}<br />
       <template v-if="props.details === undefined">
         <div class="mt-4 flex items-center gap-2 text-gray-400">
-          <svg class="animate-spin h-4 w-4 mr-2 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+          <ArrowPathIcon class="animate-spin h-4 w-4 mr-2 text-blue-400" />
           Loading commit details…
         </div>
       </template>
@@ -23,7 +24,10 @@ const { formatDate } = useFormatting();
         <div class="mt-2">
           <strong>Stats:</strong>
           <span v-if="props.details.stats">
-            +{{ props.details.stats.additions }} / -{{ props.details.stats.deletions }} ({{ props.details.stats.total }} changes)
+            +{{ props.details.stats.additions }} / -{{ props.details.stats.deletions }} ({{
+              props.details.stats.total
+            }}
+            changes)
           </span>
         </div>
         <div v-if="props.details.files && props.details.files.length" class="mt-2">
@@ -38,9 +42,7 @@ const { formatDate } = useFormatting();
             </li>
           </ul>
         </div>
-        <div v-else class="mt-2 text-gray-400 italic">
-          No file changes in this commit.
-        </div>
+        <div v-else class="mt-2 text-gray-400 italic">No file changes in this commit.</div>
       </template>
     </div>
   </div>

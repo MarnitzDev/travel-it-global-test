@@ -14,7 +14,7 @@ import { TrashIcon } from '@heroicons/vue/24/solid';
       No favorites yet.
     </div>
     <ul v-else class="space-y-4">
-      <li v-for="fav in store.favorites" :key="fav.sha" class="bg-gray-800 rounded-lg p-4 border border-gray-700 shadow overflow-x-auto">
+    <li v-for="fav in store.favorites" :key="fav.sha" class="bg-gray-800 rounded-lg p-4 border border-gray-700 shadow overflow-x-auto">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
           <div class="min-w-0">
             <div class="font-semibold text-primary-500 break-words">{{ fav.repository?.name }}</div>

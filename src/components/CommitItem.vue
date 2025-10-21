@@ -1,13 +1,13 @@
 <script setup lang="ts">
 
-import type { Commit } from '../types';
+import type { Commit, CommitDetail } from '../types';
 import CommitDetails from './CommitDetails.vue';
 import { useFormatting } from '../composables/useFormatting';
 import { useGithubStore } from '../stores/github';
 const props = defineProps<{
   commit: Commit;
   selected: boolean;
-  details?: any;
+  details?: CommitDetail;
 }>();
 const { formatDate } = useFormatting();
 const store = useGithubStore();

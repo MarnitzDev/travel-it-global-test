@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Commit } from '../types';
+import type { Commit, CommitDetail } from '../types';
 import { useFormatting } from '../composables/useFormatting';
-const props = defineProps<{ commit: Commit, details?: any }>();
+const props = defineProps<{ commit: Commit, details?: CommitDetail }>();
 const { formatDate } = useFormatting();
 </script>
 

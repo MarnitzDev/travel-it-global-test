@@ -1,13 +1,13 @@
 <script setup lang="ts">
 
-import type { Commit } from '../types';
 import CommitItem from './CommitItem.vue';
 import { useGithubStore } from '../stores/github';
 import PaginationControls from './PaginationControls.vue';
 
 const store = useGithubStore();
 
-async function handleSelectCommit(sha: string) {
+// Accepts a commit SHA string
+async function handleSelectCommit(sha: string): Promise<void> {
   if (store.selectedCommit === sha) {
     // Deselect if already selected (toggle off)
     store.setSelectedCommit('');
@@ -31,11 +31,11 @@ function handleNext() {
     <CommitItem
       v-for="commit in store.commits"
       :key="commit.sha"
-      :commit="commit"
+      :commit="commit as Commit"
       :selected="store.selectedCommit === commit.sha"
       :details="store.selectedCommit === commit.sha ? store.commitDetails[commit.sha] : undefined"
       @select="handleSelectCommit(commit.sha)"
-      @toggle-favorite="store.toggleFavorite(commit)"
+      @toggle-favorite="store.toggleFavorite(commit as Commit)"
     />
     <PaginationControls
       v-if="store.commits.length >= store.pageSize || store.page > 1"

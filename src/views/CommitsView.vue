@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+
 import { useRoute } from 'vue-router';
 import { useGithubStore } from '../stores/github';
 import CommitList from '../components/CommitList.vue';
@@ -8,8 +9,8 @@ import PaginationControls from '../components/PaginationControls.vue';
 const store = useGithubStore();
 const route = useRoute();
 const sortOrder = ref<'newest' | 'oldest'>('newest');
-const page = ref(1);
-const perPage = 10;
+const page = ref<number>(1);
+const perPage: number = 10;
 
 const username = route.params.username as string;
 const repo = route.params.repo as string;
@@ -18,12 +19,6 @@ onMounted(async () => {
   await store.fetchCommits(username, repo, page.value, perPage);
 });
 
-function handleCommitSelect(sha: string) {
-  // Implement commit selection logic if needed
-}
-function handleToggleFavorite(commit: any) {
-  // Implement favorite logic if needed
-}
 function handlePrevPage() {
   if (page.value > 1) {
     page.value--;
@@ -43,8 +38,6 @@ function handleNextPage() {
     <CommitList
       :commits="store.sortedCommits(sortOrder)"
       :selected-commit="''"
-      @select-commit="handleCommitSelect"
-      @toggle-favorite="handleToggleFavorite"
     />
     <PaginationControls
       :page="page"

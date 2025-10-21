@@ -11,6 +11,7 @@ onMounted(async () => {
   }
 });
 </script>
+
 <template>
   <div class="repos-view mx-auto mt-10">
     <h1 class="text-3xl font-bold mb-6 text-center">Repositories</h1>
@@ -32,7 +33,6 @@ onMounted(async () => {
       </div>
     </div>
   <div class="bg-white/5 shadow-xl rounded-2xl p-6 md:p-8 max-w-5xl w-full mx-auto mt-8">
-      <h2 class="text-xl font-semibold mb-4 text-primary-500 text-center tracking-wide">Repositories</h2>
       <RepoList
         :repos="store.repos"
         :username="store.username"

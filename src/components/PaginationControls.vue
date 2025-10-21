@@ -4,7 +4,6 @@ const props = defineProps<{
   page: number;
   hasNext: boolean;
 }>();
-const emit = defineEmits(['prev', 'next']);
 </script>
 
 <template>

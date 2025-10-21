@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/24/solid';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/24/outline';
 import type { Repo } from '../types';
@@ -34,7 +33,7 @@ async function handleSelect(repoName: string) {
           store.selectedRepo === repo.name ? 'ring-1 ring-gray-500' : 'hover:ring-1 hover:ring-gray-600'
         ]"
       >
-        <div class="flex items-center justify-between mb-2">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2">
           <span class="font-semibold text-lg text-primary-500 flex items-center gap-1">
             {{ repo.name }}
             <a
@@ -47,12 +46,16 @@ async function handleSelect(repoName: string) {
               <ArrowTopRightOnSquareIcon class="w-5 h-5 text-blue-400" />
             </a>
           </span>
-          <button class="btn ml-2 flex items-center gap-1" @click="handleSelect(repo.name)">
+          <button
+            class="flex items-center gap-1 px-2 py-1 rounded bg-gray-800 text-xs text-white border border-gray-600 shadow-sm hover:bg-gray-700 transition-all h-7 min-h-0 max-w-fit sm:max-w-none"
+            style="font-size: 0.85rem; line-height: 1;"
+            @click="handleSelect(repo.name)"
+          >
             <span>{{ store.selectedRepo === repo.name ? 'Hide Commits' : 'Show Commits' }}</span>
-            <component :is="store.selectedRepo === repo.name ? ChevronUpIcon : ChevronDownIcon" class="w-5 h-5" />
+            <component :is="store.selectedRepo === repo.name ? ChevronUpIcon : ChevronDownIcon" class="w-4 h-4" />
           </button>
         </div>
-        <p class="text-gray-300 text-sm pr-48">{{ repo.description || 'No description' }}</p>
+        <p class="text-gray-300 text-sm w-full break-words max-w-2xl sm:max-w-3xl">{{ repo.description || 'No description' }}</p>
         <div v-if="store.selectedRepo === repo.name" class="mt-4">
           <CommitList />
           <div v-if="store.loading" class="text-gray-400 text-xs mt-2 flex items-center gap-2">

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-
 import CommitItem from './CommitItem.vue';
 import { useGithubStore } from '../stores/github';
 import PaginationControls from './PaginationControls.vue';
+import type { Commit } from '../types';
 
 const store = useGithubStore();
 
@@ -18,11 +18,17 @@ async function handleSelectCommit(sha: string): Promise<void> {
   await store.fetchCommitDetails(undefined, undefined, sha);
 }
 
-function handlePrev() {
-  if (store.page > 1) store.setPage(store.page - 1);
+async function handlePrev() {
+  if (store.page > 1) {
+    store.setPage(store.page - 1);
+    await store.fetchCommits(store.username, store.selectedRepo, store.page - 1, store.pageSize);
+  }
 }
-function handleNext() {
-  if (store.commits.length === store.pageSize) store.setPage(store.page + 1);
+async function handleNext() {
+  if (store.commits.length === store.pageSize) {
+    store.setPage(store.page + 1);
+    await store.fetchCommits(store.username, store.selectedRepo, store.page + 1, store.pageSize);
+  }
 }
 </script>
 

@@ -1,9 +1,11 @@
 <script setup lang="ts">
-
 import type { Commit, CommitDetail } from '../types';
 import CommitDetails from './CommitDetails.vue';
 import { useFormatting } from '../composables/useFormatting';
 import { useGithubStore } from '../stores/github';
+import { HeartIcon as HeartSolid, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/solid';
+import { HeartIcon as HeartOutline } from '@heroicons/vue/24/outline';
+
 const props = defineProps<{
   commit: Commit;
   selected: boolean;
@@ -12,8 +14,6 @@ const props = defineProps<{
 const { formatDate } = useFormatting();
 const store = useGithubStore();
 
-import { HeartIcon as HeartSolid, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/solid';
-import { HeartIcon as HeartOutline } from '@heroicons/vue/24/outline';
 </script>
 
 <template>

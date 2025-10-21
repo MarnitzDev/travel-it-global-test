@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useGithubStore } from '../stores/github';
-const store = useGithubStore();
-
 import { TrashIcon } from '@heroicons/vue/24/solid';
-
-// Optionally, add logic for removing favorites or viewing details
+import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/24/outline';
+const store = useGithubStore();
+import { useFormatting } from '../composables/useFormatting';
+const { formatDate } = useFormatting();
 </script>
 
 <template>
@@ -17,10 +17,22 @@ import { TrashIcon } from '@heroicons/vue/24/solid';
     <li v-for="fav in store.favorites" :key="fav.sha" class="bg-gray-800 rounded-lg p-4 border border-gray-700 shadow overflow-x-auto">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
           <div class="min-w-0">
-            <div class="font-semibold text-primary-500 break-words">{{ fav.repository?.name }}</div>
+            <span class="font-semibold text-lg text-primary-500 flex items-center gap-1">
+              {{ fav.repository?.name }}
+              <a
+                v-if="fav.repository && typeof fav.repository === 'object' && 'name' in fav.repository"
+                :href="`https://github.com/${('owner' in fav.repository && fav.repository.owner && typeof fav.repository.owner === 'object' && 'login' in fav.repository.owner ? fav.repository.owner.login : store.username)}/${fav.repository.name}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="ml-1 p-1 rounded hover:bg-blue-900/30 transition-colors"
+                :title="`Open ${fav.repository.name} on GitHub`"
+              >
+                <ArrowTopRightOnSquareIcon class="w-5 h-5 text-blue-400" />
+              </a>
+            </span>
             <div class="text-lg font-mono text-white break-words truncate max-w-full">{{ fav.commit.message }}</div>
             <div class="text-sm text-gray-400 mt-1 break-words">
-              by {{ fav.author?.login || fav.commit.author.name }} on {{ fav.commit.author.date }}
+              by {{ fav.author?.login || fav.commit.author.name }} on {{ formatDate(fav.commit.author.date) }}
             </div>
           </div>
           <div class="mt-2 md:mt-0 flex items-center space-x-2">
@@ -37,6 +49,3 @@ import { TrashIcon } from '@heroicons/vue/24/solid';
     </ul>
   </div>
 </template>
-
-<style scoped>
-</style>

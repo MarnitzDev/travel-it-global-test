@@ -23,6 +23,16 @@ GitHub Commit Explorer built with:
 - Tailwind CSS and SCSS for styling
 - Heroicons for SVG icons
 
+## Screenshots
+
+<div align="center">
+	<img src="public/screenshots/screenshot_01.png" alt="Screenshot 1" />
+	<img src="public/screenshots/screenshot_02.png" alt="Screenshot 2" />
+	<img src="public/screenshots/screenshot_03.png" alt="Screenshot 3" />
+</div>
+
+
+
 ## Project Setup
 
 1. Install dependencies:

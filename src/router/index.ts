@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
-
 import ReposView from '../views/ReposView.vue';
 import CommitsView from '../views/CommitsView.vue';
 import FavoritesView from '../views/FavoritesView.vue';

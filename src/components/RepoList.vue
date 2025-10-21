@@ -51,8 +51,8 @@ async function handleCommitPageChange(page: number) {
         v-for="repo in props.repos"
         :key="repo.name"
         :class="[
-          'bg-gray-800 rounded-lg shadow p-5 border border-gray-700 transition-all',
-          uiStore.selections.selectedRepo === repo.name ? 'ring-2 ring-primary-500' : 'hover:ring-1 hover:ring-primary-400'
+          'bg-gray-00 rounded-lg shadow p-5 border border-gray-700 transition-all',
+          uiStore.selections.selectedRepo === repo.name ? 'ring-1 ring-gray-500' : 'hover:ring-1 hover:ring-gray-600'
         ]"
       >
         <div class="flex items-center justify-between mb-2">

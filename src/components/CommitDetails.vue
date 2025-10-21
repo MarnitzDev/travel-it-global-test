@@ -11,9 +11,15 @@ const { formatDate } = useFormatting();
     <div class="text-sm text-gray-200">
       <strong>SHA:</strong> {{ props.commit.sha }}<br />
       <strong>Author:</strong> {{ props.commit.commit.author.name }}<br />
-  <strong>Date:</strong> {{ formatDate(props.commit.commit.author.date) }}<br />
+      <strong>Date:</strong> {{ formatDate(props.commit.commit.author.date) }}<br />
       <strong>Message:</strong> {{ props.commit.commit.message }}<br />
-      <template v-if="props.details">
+      <template v-if="props.details === undefined">
+        <div class="mt-4 flex items-center gap-2 text-gray-400">
+          <svg class="animate-spin h-4 w-4 mr-2 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+          Loading commit details…
+        </div>
+      </template>
+      <template v-else>
         <div class="mt-2">
           <strong>Stats:</strong>
           <span v-if="props.details.stats">
@@ -31,6 +37,9 @@ const { formatDate } = useFormatting();
               </span>
             </li>
           </ul>
+        </div>
+        <div v-else class="mt-2 text-gray-400 italic">
+          No file changes in this commit.
         </div>
       </template>
     </div>

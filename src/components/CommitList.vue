@@ -9,10 +9,13 @@ const store = useGithubStore();
 
 async function handleSelectCommit(sha: string) {
   if (store.selectedCommit === sha) {
+    // Deselect if already selected (toggle off)
     store.setSelectedCommit('');
-  } else {
-    await store.fetchCommitDetails(undefined, undefined, sha);
+    return;
   }
+  // Set selected first so details view opens immediately
+  store.setSelectedCommit(sha);
+  await store.fetchCommitDetails(undefined, undefined, sha);
 }
 
 function handlePrev() {

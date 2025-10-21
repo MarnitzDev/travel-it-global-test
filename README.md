@@ -9,6 +9,7 @@ GitHub Commit Explorer built with:
 - **Tailwind CSS** & **SCSS** (styling)
 - **Heroicons** (SVG icons)
 - **ESLint** (linting)
+- **Prettier** (code formatting)
 - **Vitest** (unit testing)
 
 ## Features
@@ -18,7 +19,7 @@ GitHub Commit Explorer built with:
 - Favorite commits (persisted in local storage)
 - View commit details (files changed, author, date, etc.)
 - Responsive, modern UI with custom styling
-- TypeScript, ESLint, and unit tests with Vitest
+- TypeScript, ESLint, Prettier, and unit tests with Vitest
 - Tailwind CSS and SCSS for styling
 - Heroicons for SVG icons
 

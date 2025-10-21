@@ -36,12 +36,35 @@ export const useGithubStore = defineStore('github', () => {
   }, { deep: true });
 
   // Actions
+  /**
+   * Set the current GitHub username for API requests.
+   */
   function setUsername(name: string) { username.value = name; }
+
+  /**
+   * Set the currently selected repository name.
+   */
   function setSelectedRepo(repo: string) { selectedRepo.value = repo; }
+
+  /**
+   * Set the currently selected commit SHA.
+   */
   function setSelectedCommit(sha: string) { selectedCommit.value = sha; }
+
+  /**
+   * Set the current page for pagination.
+   */
   function setPage(p: number) { page.value = p; }
+
+  /**
+   * Set the sort order for commits (newest or oldest).
+   */
   function setSortOrder(order: 'newest' | 'oldest') { sortOrder.value = order; }
 
+  /**
+   * Fetch repositories for a given username (or current username if not provided).
+   * Updates the repos list and username state.
+   */
   async function fetchRepos(name?: string) {
     loading.value = true;
     error.value = null;
@@ -57,6 +80,10 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
+  /**
+   * Fetch commits for a given user/repo and page.
+   * Updates the commits list and selectedRepo/page state.
+   */
   async function fetchCommits(user?: string, repoName?: string, p?: number, perPage?: number) {
     loading.value = true;
     error.value = null;
@@ -76,6 +103,10 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
+  /**
+   * Fetch details for a specific commit by SHA.
+   * Updates the commitDetails map and selectedCommit state.
+   */
   async function fetchCommitDetails(user?: string, repoName?: string, sha?: string) {
     loading.value = true;
     error.value = null;
@@ -92,6 +123,13 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
+  /**
+   * Sorts only the currently loaded page of commits (not globally across all pages).
+   * For global sorting, all commits would need to be fetched at once, which is not practical for large repos.
+   *
+   * Recommended approach: Implement sorting on the backend API so that results are returned in the desired order,
+   * and pagination works as expected for the sorted dataset.
+   */
   function sortedCommits(order?: 'newest' | 'oldest') {
     const useOrder = order || sortOrder.value;
     return [...commits.value].sort((a, b) => {
@@ -101,6 +139,10 @@ export const useGithubStore = defineStore('github', () => {
     });
   }
 
+  /**
+   * Add a commit to the favorites list, optionally specifying the repo name.
+   * Also updates the favorited state on the commit in the current list.
+   */
   function addFavorite(commit: Commit, repoName?: string) {
     if (!favorites.value.some((f) => f.sha === commit.sha)) {
       const favorite: FavoriteCommit = {
@@ -113,12 +155,19 @@ export const useGithubStore = defineStore('github', () => {
     }
   }
 
+  /**
+   * Remove a commit from the favorites list by SHA.
+   * Also updates the favorited state on the commit in the current list.
+   */
   function removeFavorite(sha: string) {
     favorites.value = favorites.value.filter((f) => f.sha !== sha);
     const match = commits.value.find(c => c.sha === sha);
     if (match) match.favorited = false;
   }
 
+  /**
+   * Toggle the favorite status of a commit (add or remove from favorites).
+   */
   function toggleFavorite(commit: Commit) {
     if (favorites.value.some((f) => f.sha === commit.sha)) {
       removeFavorite(commit.sha);

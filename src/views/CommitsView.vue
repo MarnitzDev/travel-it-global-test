@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-
 import { useRoute } from 'vue-router';
 import { useGithubStore } from '../stores/github';
 import CommitList from '../components/CommitList.vue';
@@ -32,6 +31,7 @@ function handleNextPage() {
   }
 }
 </script>
+
 <template>
   <div class="commits-view max-w-3xl mx-auto mt-10">
     <h1 class="text-3xl font-bold mb-6 text-center">Commits for {{ repo }}</h1>

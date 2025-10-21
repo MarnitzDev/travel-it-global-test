@@ -18,7 +18,14 @@ export class GithubProvider implements GitProvider {
     const response = await fetch(`${this.apiBase}/users/${username}/repos`, {
       headers: this.getHeaders(),
     });
-    if (!response.ok) throw new Error('Failed to fetch repositories');
+    if (!response.ok) {
+      let msg = 'Failed to fetch repositories';
+      try {
+        const data = await response.json();
+        if (data && data.message) msg = data.message;
+      } catch {}
+      throw new Error(msg);
+    }
     return response.json();
   }
 
@@ -26,7 +33,14 @@ export class GithubProvider implements GitProvider {
     const response = await fetch(`${this.apiBase}/repos/${username}/${repo}/commits?page=${page}&per_page=${perPage}`, {
       headers: this.getHeaders(),
     });
-    if (!response.ok) throw new Error('Failed to fetch commits');
+    if (!response.ok) {
+      let msg = 'Failed to fetch commits';
+      try {
+        const data = await response.json();
+        if (data && data.message) msg = data.message;
+      } catch {}
+      throw new Error(msg);
+    }
     return response.json();
   }
 
@@ -34,7 +48,14 @@ export class GithubProvider implements GitProvider {
     const response = await fetch(`${this.apiBase}/repos/${username}/${repo}/commits/${sha}`, {
       headers: this.getHeaders(),
     });
-    if (!response.ok) throw new Error('Failed to fetch commit details');
+    if (!response.ok) {
+      let msg = 'Failed to fetch commit details';
+      try {
+        const data = await response.json();
+        if (data && data.message) msg = data.message;
+      } catch {}
+      throw new Error(msg);
+    }
     return response.json();
   }
 }

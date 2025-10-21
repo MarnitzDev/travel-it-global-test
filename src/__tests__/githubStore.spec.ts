@@ -111,11 +111,12 @@ describe('GitHub Store', () => {
       expect(store.error).toBe(null);
     });
 
+
     it('handles 404 error for invalid user', async () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
         status: 404,
-        json: async () => ({}),
+        json: async () => ({ message: 'User not found' }),
       } as Response);
 
       await store.fetchRepos('invalidUser');
@@ -129,7 +130,7 @@ describe('GitHub Store', () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
         status: 403,
-        json: async () => ({}),
+        json: async () => ({ message: 'API rate limit exceeded' }),
       } as Response);
 
       await store.fetchRepos('MarnitzDev');
@@ -195,7 +196,7 @@ describe('GitHub Store', () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
         status: 403,
-        json: async () => ({}),
+        json: async () => ({ message: 'API rate limit exceeded' }),
       } as Response);
 
       await store.fetchCommits('MarnitzDev', 'travel-it-global-test', 1, 10);
@@ -228,6 +229,7 @@ describe('GitHub Store', () => {
 
       expect(fetch).toHaveBeenCalledWith(
         'https://api.github.com/repos/MarnitzDev/travel-it-global-test/commits/abc123',
+        expect.objectContaining({ headers: expect.any(Object) })
       );
       expect(store.commitDetails['abc123']).toEqual(mockCommitDetail);
       expect(store.loading).toBe(false);
@@ -238,7 +240,7 @@ describe('GitHub Store', () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
         status: 404,
-        json: async () => ({}),
+        json: async () => ({ message: 'Failed to fetch commit details' }),
       } as Response);
 
       await store.fetchCommitDetails('MarnitzDev', 'travel-it-global-test', 'invalid-sha');
@@ -252,13 +254,14 @@ describe('GitHub Store', () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
         status: 404,
-        json: async () => ({}),
+        json: async () => ({ message: 'Failed to fetch commit details' }),
       } as Response);
 
       await store.fetchCommitDetails('MarnitzDev', 'no-repo', 'abc123');
 
       expect(fetch).toHaveBeenCalledWith(
         'https://api.github.com/repos/MarnitzDev/no-repo/commits/abc123',
+        expect.objectContaining({ headers: expect.any(Object) })
       );
       expect(store.error).toBe('Failed to fetch commit details');
       expect(store.commitDetails['abc123']).toBeUndefined();
@@ -269,7 +272,7 @@ describe('GitHub Store', () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
         status: 403,
-        json: async () => ({}),
+        json: async () => ({ message: 'API rate limit exceeded' }),
       } as Response);
 
       await store.fetchCommitDetails('MarnitzDev', 'travel-it-global-test', 'abc123');
